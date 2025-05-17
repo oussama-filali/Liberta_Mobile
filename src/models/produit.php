@@ -1,14 +1,49 @@
 <?php
-// api/produits.php
-require_once __DIR__ . '/../core/database.php';
-
 class Produit {
-    public static function getAll() {
-        $pdo = Database::getConnection();
-        $stmt = $pdo->query("SELECT * FROM produit");
+    private $db;
+
+    public function __construct($db) {
+        $this->db = $db;
+    }
+
+    public function getProduitsPhare() {
+        $stmt = $this->db->getPdo()->query("SELECT p.*, m.nom AS marque, mo.nom AS modele, f.nom AS forfait_nom FROM produit p LEFT JOIN marque m ON p.marque_id = m.id LEFT JOIN modele mo ON p.modele_id = mo.id LEFT JOIN forfait f ON p.forfait_id = f.id ORDER BY p.id DESC LIMIT 4");
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
-}
 
-header('Content-Type: application/json');
-echo json_encode(Produit::getAll());
+    public function getProduit($id) {
+        $stmt = $this->db->getPdo()->prepare("SELECT p.*, m.nom AS marque, mo.nom AS modele, f.nom AS forfait_nom, f.reseau, f.data, f.appels_illimites, f.sms_illimites FROM produit p LEFT JOIN marque m ON p.marque_id = m.id LEFT JOIN modele mo ON p.modele_id = mo.id LEFT JOIN forfait f ON p.forfait_id = f.id WHERE p.id = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function getProduits($filters = []) {
+        $sql = "SELECT p.*, m.nom AS marque, mo.nom AS modele, f.nom AS forfait_nom FROM produit p LEFT JOIN marque m ON p.marque_id = m.id LEFT JOIN modele mo ON p.modele_id = mo.id LEFT JOIN forfait f ON p.forfait_id = f.id WHERE 1=1";
+        $params = [];
+        if (!empty($filters['type'])) {
+            $sql .= " AND p.type = ?";
+            $params[] = $filters['type'];
+        }
+        if (!empty($filters['marque_id'])) {
+            $sql .= " AND p.marque_id = ?";
+            $params[] = $filters['marque_id'];
+        }
+        if (!empty($filters['prix_min'])) {
+            $sql .= " AND p.prix >= ?";
+            $params[] = $filters['prix_min'];
+        }
+        if (!empty($filters['prix_max'])) {
+            $sql .= " AND p.prix <= ?";
+            $params[] = $filters['prix_max'];
+        }
+        $stmt = $this->db->getPdo()->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function updateStock($id, $quantite) {
+        $stmt = $this->db->getPdo()->prepare("UPDATE produit SET stock = stock - ? WHERE id = ? AND stock >= ?");
+        return $stmt->execute([$quantite, $id, $quantite]);
+    }
+}
+?>
