@@ -1,15 +1,19 @@
 <?php
+namespace Liberta_Mobile\Model;
+
+use Liberta_Mobile\Config\Database;
+
 class Utilisateur {
     private $db;
 
-    public function __construct($db) {
+    public function __construct(Database $db) {
         $this->db = $db;
     }
 
     public function getUtilisateurByEmail($email) {
         $stmt = $this->db->getPdo()->prepare("SELECT * FROM utilisateur WHERE email = ?");
         $stmt->execute([$email]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        return $stmt->fetch() ?: null;
     }
 
     public function createUtilisateur($nom, $prenom, $email, $mot_de_passe) {
