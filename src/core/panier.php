@@ -1,5 +1,5 @@
 <?php
-// src/core/Panier.php
+// src/Core/Panier.php
 
 namespace Liberta_Mobile\Core;
 

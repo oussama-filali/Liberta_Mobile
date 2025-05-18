@@ -6,7 +6,8 @@ if (!defined('LIBERTA_MOBILE_INCLUDED')) {
 }
 
 $filters = $_GET;
-$produits = $this->produit->getProduits($filters);
+// Accéder correctement à la propriété produit du contrôleur
+$produits = $GLOBALS['controller']->produit->getProduits($filters);
 $db = new \Liberta_Mobile\Config\Database();
 $marques = $db->getPdo()->query("SELECT * FROM marque")->fetchAll();
 

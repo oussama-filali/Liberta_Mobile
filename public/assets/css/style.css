@@ -1,90 +1,118 @@
 :root {
-    --primary-blue: #2B3A67;
-    --accent-orange: #FF6F61;
-    --light-gray: #F7F7F7;
-    --dark-gray: #4A4A4A;
-    --white: #FFFFFF;
-    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --primary: #2B3A67;
+    --accent: #FF6F61;
+    --bg: #F8F8F8;
+    --text: #333;
+    --white: #fff;
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 body {
-    font-family: 'Roboto', sans-serif;
-    background-color: var(--light-gray);
+    font-family: 'Segoe UI', sans-serif;
     margin: 0;
-    padding: 0;
-    color: var(--dark-gray);
+    background-color: var(--bg);
+    color: var(--text);
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 15px;
+    padding: 0 1rem;
 }
 
-.bg-primary { background-color: var(--primary-blue); }
-.bg-accent { background-color: var(--accent-orange); }
-.text-accent { color: var(--accent-orange); }
-.text-white { color: var(--white); }
-
-header {
-    z-index: 1000;
-    box-shadow: var(--shadow);
+h1, h2, h3 {
+    color: var(--primary);
 }
 
-nav a {
-    color: var(--white);
+a {
     text-decoration: none;
-    font-weight: 500;
-    transition: color 0.3s ease;
+    color: var(--accent);
 }
 
-nav a:hover { color: var(--accent-orange); }
-
-input, select, button {
-    border: 1px solid var(--dark-gray);
-    outline: none;
-    padding: 10px;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-}
-
-button {
-    background-color: var(--accent-orange);
+.btn {
+    display: inline-block;
+    background-color: var(--accent);
     color: var(--white);
+    padding: 10px 20px;
+    border-radius: 6px;
     font-weight: 500;
-    cursor: pointer;
+    transition: background 0.2s ease;
 }
 
-button:hover { background-color: #E65A50; }
-
-.grid { display: grid; gap: 20px; }
-.table { width: 100%; border-collapse: collapse; }
-.table th, .table td {
-    border: 1px solid var(--dark-gray);
-    padding: 12px;
-    text-align: left;
+.btn:hover {
+    background-color: #e6544f;
 }
 
 .card {
     background-color: var(--white);
-    border-radius: 10px;
+    border-radius: 8px;
     padding: 20px;
     box-shadow: var(--shadow);
-    transition: transform 0.3s ease;
+    transition: transform 0.2s ease;
 }
 
-.card:hover { transform: translateY(-5px); }
-
-@media (max-width: 640px) {
-    nav { flex-direction: column; gap: 10px; }
-    input, select { width: 100%; }
-    .grid { grid-template-columns: 1fr; }
+.card:hover {
+    transform: translateY(-4px);
 }
 
-@media (min-width: 641px) and (max-width: 1024px) {
-    .grid { grid-template-columns: repeat(2, 1fr); }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
 }
 
-@media (min-width: 1025px) {
-    .grid { grid-template-columns: repeat(4, 1fr); }
+/* TABLE */
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+input, select {
+    padding: 10px;
+    width: 100%;
+    margin-top: 4px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* HERO CAROUSEL */
+.hero {
+    background: url('/LIBERTA_MOBILE/public/images/banner1.jpg') no-repeat center center / cover;
+    color: white;
+    padding: 100px 20px;
+    position: relative;
+    text-align: center;
+}
+
+.hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.hero > * {
+    position: relative;
+    z-index: 1;
+}
+.carousel {
+    position: relative;
+    overflow: hidden;
+    height: 400px;
+}
+.carousel-image {
+    position: absolute;
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s ease;
+}
+.carousel-image.active {
+    opacity: 1;
 }

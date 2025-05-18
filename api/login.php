@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
-require_once __DIR__ . '/../config/database.php';
-require_once __DIR__ . '/../src/Core/Autoloader.php';
+require_once __DIR__ . '/../src/config/database.php';
+require_once __DIR__ . '/../src/core/Autoloader.php';
 use Liberta_Mobile\Core\Autoloader;
 (new Autoloader())->register();
 

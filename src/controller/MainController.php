@@ -1,8 +1,8 @@
 <?php
-// src/controllers/MainController.php
+// src/Controller/MainController.php
 
 namespace Liberta_Mobile\Controller;
-
+use Liberta_Mobile\Core\Autoloader;
 use Liberta_Mobile\Config\Database;
 use Liberta_Mobile\Model\Produit;
 
@@ -11,13 +11,18 @@ class MainController {
     public $produit;
 
     public function __construct() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
         $this->db = new Database();
         $this->produit = new Produit($this->db);
     }
 
     public function route() {
         $page = $_GET['page'] ?? 'home';
-        define('LIBERTA_MOBILE_INCLUDED', true);
+        if (!defined('LIBERTA_MOBILE_INCLUDED')) {
+            define('LIBERTA_MOBILE_INCLUDED', true);
+        }
 
         ob_start();
         switch ($page) {
@@ -51,7 +56,7 @@ class MainController {
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
             <title>Liberta Mobile</title>
-            <link rel="stylesheet" href="assets/css/style.css">
+            <link rel="stylesheet" href="/public/assets/css/style.css">
         </head>
         <body>
             <header>
@@ -61,7 +66,7 @@ class MainController {
                         <a href="?page=home">Accueil</a>
                         <a href="?page=boutique">Boutique</a>
                         <a href="?page=panier">Panier</a>
-                        <a href="?page=profil"><?php echo isset($_SESSION['user']) ? 'Profil' : 'Connexion'; ?></a>
+                        <a href="?page=profil"><?= isset($_SESSION['user']) ? 'Profil' : 'Connexion'; ?></a>
                         <a href="?page=admin">Admin</a>
                     </nav>
                 </div>
@@ -75,9 +80,10 @@ class MainController {
                 <p>© <?= date('Y') ?> Liberta Mobile. Tous droits réservés.</p>
             </footer>
 
-            <script src="assets/js/script.js"></script>
+            <script src="/public/assets/js/script.js"></script>
         </body>
         </html>
-        <?php return ob_get_clean();
+        <?php
+        return ob_get_clean();
     }
 }
