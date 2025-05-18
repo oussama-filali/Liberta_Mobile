@@ -1,10 +1,20 @@
 <?php
+// This file is included within MainController context
+// Check if this file is being accessed directly
+if (!defined('LIBERTA_MOBILE_INCLUDED')) {
+    // Ensure this file is included within the MainController context
+    define('LIBERTA_MOBILE_INCLUDED', true);
+}
+
+// Get the controller instance
+$controller = $this;
+
 if (!isset($_GET['id'])) {
     header('Location: ?page=boutique');
     exit;
 }
 $produit_id = (int)$_GET['id'];
-$produit_data = $this->produit->getProduit($produit_id);
+$produit_data = $controller->produit->getProduit($produit_id);
 if (!$produit_data) {
     header('Location: ?page=boutique');
     exit;
@@ -12,8 +22,8 @@ if (!$produit_data) {
 
 if (isset($_POST['ajouter'])) {
     $quantite = (int)$_POST['quantite'];
-    if ($this->produit->updateStock($produit_id, $quantite)) {
-        $panier = new \LibertaMobile\Core\Panier();
+    if ($controller->produit->updateStock($produit_id, $quantite)) {
+        $panier = new \Liberta_Mobile\Core\Panier();
         $panier->ajouterProduit($produit_id, $quantite);
         header('Location: ?page=panier');
         exit;

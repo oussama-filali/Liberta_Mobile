@@ -1,5 +1,5 @@
 <?php
-namespace LibertaMobile\Core;
+namespace Liberta_Mobile\Core;
 
 class Panier {
     public $items;

@@ -1,8 +1,10 @@
 <?php
+// src/config/Database.php
+
 namespace Liberta_Mobile\Config;
 
-use \PDO;
-use \PDOException;
+use PDO;
+use PDOException;
 
 class Database {
     private $pdo;
@@ -21,4 +23,3 @@ class Database {
         return $this->pdo;
     }
 }
-?>

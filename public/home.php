@@ -1,5 +1,16 @@
 <?php
-$produits_phares = $this->produit->getProduitsPhare();
+// Include the files that define the Produit and Database classes
+require_once __DIR__ . '/../src/config/database.php';
+require_once __DIR__ . '/../src/models/produit.php';
+
+// Use the namespaced classes
+use Liberta_Mobile\Config\Database;
+use Liberta_Mobile\Model\Produit;
+
+// Create a Database instance and pass it to the Produit constructor
+$db = new Database();
+$produit = new Produit($db);
+$produits_phares = $produit->getProduitsPhare();
 $content = '<section class="bg-light-gray py-12">
     <div class="container mx-auto text-center">
         <h2 class="text-4xl font-bold mb-4">Découvrez nos derniers smartphones et forfaits</h2>
