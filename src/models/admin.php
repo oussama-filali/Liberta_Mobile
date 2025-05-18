@@ -1,4 +1,6 @@
 <?php
+// src/models/Admin.php
+
 namespace Liberta_Mobile\Model;
 
 use Liberta_Mobile\Config\Database;
@@ -10,15 +12,9 @@ class Admin {
         $this->db = $db;
     }
 
-    public function getAdmins() {
-        $stmt = $this->db->getPdo()->query("SELECT * FROM admin");
-        return $stmt->fetchAll() ?: [];
-    }
-
     public function getAdminByEmail($email) {
         $stmt = $this->db->getPdo()->prepare("SELECT * FROM admin WHERE email = ? AND actif = 1");
         $stmt->execute([$email]);
-        return $stmt->fetch() ?: null;
+        return $stmt->fetch();
     }
 }
-?>

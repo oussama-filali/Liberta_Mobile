@@ -3,7 +3,7 @@ if (!isset($_SESSION['user']) && isset($_GET['action']) && $_GET['action'] === '
     if (isset($_POST['connexion'])) {
         $email = $_POST['email'];
         $mot_de_passe = $_POST['mot_de_passe'];
-        $utilisateur = new \LibertaMobile\Model\Utilisateur($this->db);
+        $utilisateur = new \Liberta_Mobile\Model\Utilisateur($this->db);
         $user = $utilisateur->getUtilisateurByEmail($email);
         if ($user && password_verify($mot_de_passe, $user['mot_de_passe'])) {
             $_SESSION['user'] = $user;
@@ -38,7 +38,7 @@ if (!isset($_SESSION['user']) && isset($_GET['action']) && $_GET['action'] === '
         $prenom = $_POST['prenom'];
         $email = $_POST['email'];
         $mot_de_passe = $_POST['mot_de_passe'];
-        $utilisateur = new \LibertaMobile\Model\Utilisateur($this->db);
+        $utilisateur = new \Liberta_Mobile\Model\Utilisateur($this->db);
         if ($utilisateur->createUtilisateur($nom, $prenom, $email, $mot_de_passe)) {
             $user = $utilisateur->getUtilisateurByEmail($email);
             $_SESSION['user'] = $user;
@@ -79,7 +79,7 @@ if (!isset($_SESSION['user']) && isset($_GET['action']) && $_GET['action'] === '
         $nom = $_POST['nom'];
         $prenom = $_POST['prenom'];
         $email = $_POST['email'];
-        $utilisateur = new \LibertaMobile\Model\Utilisateur($this->db);
+        $utilisateur = new \Liberta_Mobile\Model\Utilisateur($this->db);
         if ($utilisateur->updateUtilisateur($_SESSION['user']['id'], $nom, $prenom, $email)) {
             $_SESSION['user']['nom'] = $nom;
             $_SESSION['user']['prenom'] = $prenom;

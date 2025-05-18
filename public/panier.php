@@ -1,10 +1,15 @@
 <?php
-use LibertaMobile\Core\Panier;
+use Liberta_Mobile\Core\Panier;
+use Liberta_Mobile\Model\Produit;
+use Liberta_Mobile\Config\Database;
 
 if (isset($_POST['ajouter'])) {
     $produit_id = $_POST['produit_id'];
     $quantite = (int)$_POST['quantite'];
-    if ($this->produit->updateStock($produit_id, $quantite)) {
+    // Instancier la base de données et le produit correctement
+    $db = new Database();
+    $produit = new Produit($db);
+    if ($produit->updateStock($produit_id, $quantite)) {
         $panier = new Panier();
         $panier->ajouterProduit($produit_id, $quantite);
         header('Location: ?page=panier');

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : mer. 14 mai 2025 à 19:28
+-- Généré le : dim. 18 mai 2025 à 00:15
 -- Version du serveur : 9.1.0
 -- Version de PHP : 8.3.14
 
@@ -195,6 +195,7 @@ CREATE TABLE IF NOT EXISTS `utilisateur` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nom` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `prenom` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `date_naissance` date DEFAULT NULL,
   `email` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
   `mot_de_passe` varchar(200) COLLATE utf8mb4_unicode_ci NOT NULL,
   `role` enum('client','admin') COLLATE utf8mb4_unicode_ci DEFAULT 'client',
