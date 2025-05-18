@@ -1,5 +1,5 @@
 <?php
-// src/models/Utilisateur.php
+// src/Model/Utilisateur.php
 
 namespace Liberta_Mobile\Model;
 

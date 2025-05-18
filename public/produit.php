@@ -11,7 +11,7 @@ if (!isset($_GET['id'])) {
 }
 
 $id = (int)$_GET['id'];
-$produit = $this->produit->getProduit($id);
+$produit = $GLOBALS['controller']->Produit->getProduit($id);
 
 if (!$produit) {
     $content = '<p class="text-red-600 text-center mt-10">Produit introuvable.</p>';

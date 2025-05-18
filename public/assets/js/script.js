@@ -65,3 +65,9 @@ async function procederPaiement() {
         alert('Erreur lors du paiement');
     }
 }
+let index = 0;
+const slides = document.querySelectorAll('.carousel-image');
+setInterval(() => {
+    slides.forEach((img, i) => img.classList.toggle('active', i === index));
+    index = (index + 1) % slides.length;
+}, 3000);

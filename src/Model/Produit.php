@@ -1,9 +1,9 @@
 <?php
-// src/models/Produit.php
+// src/Model/Produit.php
 
 namespace Liberta_Mobile\Model;
 
-use Liberta_Mobile\Config\Database;
+use Liberta_Mobile\config\Database;
 
 class Produit {
     private $db;

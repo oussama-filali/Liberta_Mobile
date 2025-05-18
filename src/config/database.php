@@ -1,5 +1,5 @@
 <?php
-// src/config/Database.php
+// src/Config/Database.php
 
 namespace Liberta_Mobile\Config;
 

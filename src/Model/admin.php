@@ -1,5 +1,5 @@
 <?php
-// src/models/Admin.php
+// src/Model/Admin.php
 
 namespace Liberta_Mobile\Model;
 
