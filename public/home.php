@@ -1,39 +1,31 @@
 <?php
-// Include the files that define the Produit and Database classes
-require_once __DIR__ . '/../src/config/database.php';
-require_once __DIR__ . '/../src/models/produit.php';
+// public/home.php
 
-// Use the namespaced classes
-use Liberta_Mobile\Config\Database;
-use Liberta_Mobile\Model\Produit;
+if (!defined('LIBERTA_MOBILE_INCLUDED')) {
+    die('Accès non autorisé.');
+}
 
-// Create a Database instance and pass it to the Produit constructor
-$db = new Database();
-$produit = new Produit($db);
-$produits_phares = $produit->getProduitsPhare();
-$content = '<section class="bg-light-gray py-12">
-    <div class="container mx-auto text-center">
-        <h2 class="text-4xl font-bold mb-4">Découvrez nos derniers smartphones et forfaits</h2>
-        <a href="?page=boutique" class="bg-accent text-white py-2 px-6 rounded hover:bg-red-700">Voir la boutique</a>
+$produits_phares = $this->produit->getProduitsPhare();
+
+$content = '<section class="hero">
+    <div class="container text-center py-10">
+        <h2 class="text-4xl font-bold mb-4">Bienvenue sur Liberta Mobile</h2>
+        <p class="mb-6">Découvrez nos derniers modèles de smartphones et forfaits</p>
+        <a href="?page=boutique" class="btn">Voir la boutique</a>
     </div>
 </section>
 
-<section class="container mx-auto py-8">
-    <h2 class="text-3xl font-bold mb-6 text-center">Nos produits phares</h2>
+<section class="container py-10">
+    <h3 class="text-3xl font-semibold mb-6 text-center">Produits phares</h3>
     <div class="grid">';
+
 foreach ($produits_phares as $p) {
     $content .= '<div class="card">
-        ' . ($p['image_url'] ? '<img src="' . htmlspecialchars($p['image_url']) . '" alt="' . htmlspecialchars($p['nom']) . '" class="w-full h-48 object-cover rounded-t-lg">' : '') . '
-        <h3 class="text-xl font-semibold mt-2">' . htmlspecialchars($p['nom']) . '</h3>';
-    if ($p['type'] === 'telephone') {
-        $content .= '<p class="text-gray-600">' . htmlspecialchars($p['marque']) . ' ' . htmlspecialchars($p['modele']) . '</p>';
-    } else {
-        $content .= '<p class="text-gray-600">' . htmlspecialchars($p['forfait_nom']) . '</p>';
-    }
-    $content .= '<p class="text-gray-600">' . number_format($p['prix'], 2) . ' €</p>
-        <a href="?page=produit&id=' . $p['id'] . '" class="bg-accent text-white py-2 px-4 rounded mt-2 inline-block">Voir détails</a>
+        <img src="public/images/' . htmlspecialchars($p['image_url']) . '" alt="' . htmlspecialchars($p['nom']) . '" class="h-48 w-full object-cover rounded mb-2">
+        <h4 class="text-xl font-bold">' . htmlspecialchars($p['nom']) . '</h4>
+        <p class="text-gray-600">' . number_format($p['prix'], 2) . ' €</p>
+        <a href="?page=produit&id=' . $p['id'] . '" class="btn mt-2">Détails</a>
     </div>';
 }
-$content .= '</div>
-</section>';
-?>
+
+$content .= '</div></section>';

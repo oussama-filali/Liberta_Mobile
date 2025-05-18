@@ -1,4 +1,6 @@
 <?php
+// src/core/Panier.php
+
 namespace Liberta_Mobile\Core;
 
 class Panier {
@@ -9,9 +11,9 @@ class Panier {
     }
 
     public function ajouterProduit($idProduit, $quantite) {
-        $existing = array_search($idProduit, array_column($this->items, 'id'));
-        if ($existing !== false) {
-            $this->items[$existing]['quantite'] += $quantite;
+        $exist = array_search($idProduit, array_column($this->items, 'id'));
+        if ($exist !== false) {
+            $this->items[$exist]['quantite'] += $quantite;
         } else {
             $this->items[] = ['id' => $idProduit, 'quantite' => $quantite];
         }
@@ -23,4 +25,3 @@ class Panier {
         $_SESSION['panier'] = json_encode($this->items);
     }
 }
-?>

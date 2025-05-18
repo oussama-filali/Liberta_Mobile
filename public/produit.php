@@ -1,62 +1,42 @@
 <?php
-// This file is included within MainController context
-// Check if this file is being accessed directly
-if (!defined('LIBERTA_MOBILE_INCLUDED')) {
-    // Ensure this file is included within the MainController context
-    define('LIBERTA_MOBILE_INCLUDED', true);
-}
+// public/produit.php
 
-// Get the controller instance
-$controller = $this;
+if (!defined('LIBERTA_MOBILE_INCLUDED')) {
+    die('Accès interdit');
+}
 
 if (!isset($_GET['id'])) {
     header('Location: ?page=boutique');
     exit;
 }
-$produit_id = (int)$_GET['id'];
-$produit_data = $controller->produit->getProduit($produit_id);
-if (!$produit_data) {
-    header('Location: ?page=boutique');
-    exit;
+
+$id = (int)$_GET['id'];
+$produit = $this->produit->getProduit($id);
+
+if (!$produit) {
+    $content = '<p class="text-red-600 text-center mt-10">Produit introuvable.</p>';
+    return;
 }
 
-if (isset($_POST['ajouter'])) {
-    $quantite = (int)$_POST['quantite'];
-    if ($controller->produit->updateStock($produit_id, $quantite)) {
-        $panier = new \Liberta_Mobile\Core\Panier();
-        $panier->ajouterProduit($produit_id, $quantite);
-        header('Location: ?page=panier');
-        exit;
-    } else {
-        $erreur = "Stock insuffisant";
-    }
-}
-
-$content = '<section class="container mx-auto py-8">
+$content = '<section class="container py-10">
     <div class="card flex flex-col md:flex-row gap-6">
-        ' . ($produit_data['image_url'] ? '<img src="' . htmlspecialchars($produit_data['image_url']) . '" alt="' . htmlspecialchars($produit_data['nom']) . '" class="w-full md:w-1/3 h-64 object-cover rounded-lg">' : '') . '
+        <img src="public/images/' . htmlspecialchars($produit['image_url']) . '" alt="' . htmlspecialchars($produit['nom']) . '" class="w-full md:w-1/3 h-64 object-cover rounded">
         <div class="flex-1">
-            <h2 class="text-3xl font-bold mb-4">' . htmlspecialchars($produit_data['nom']) . '</h2>';
-if ($produit_data['type'] === 'telephone') {
-    $content .= '<p class="text-gray-600 mb-2">' . htmlspecialchars($produit_data['marque']) . ' ' . htmlspecialchars($produit_data['modele']) . '</p>';
-} else {
-    $content .= '<p class="text-gray-600 mb-2">' . htmlspecialchars($produit_data['forfait_nom']) . '</p>
-        <p class="text-gray-600 mb-2">Réseau: ' . htmlspecialchars($produit_data['reseau']) . '</p>
-        <p class="text-gray-600 mb-2">Données: ' . htmlspecialchars($produit_data['data']) . ' Go</p>
-        <p class="text-gray-600 mb-2">Appels: ' . ($produit_data['appels_illimites'] ? 'Illimités' : 'Limités') . '</p>
-        <p class="text-gray-600 mb-2">SMS: ' . ($produit_data['sms_illimites'] ? 'Illimités' : 'Limités') . '</p>';
+            <h2 class="text-3xl font-bold mb-4">' . htmlspecialchars($produit['nom']) . '</h2>
+            <p class="text-gray-600 mb-2"><strong>Type :</strong> ' . htmlspecialchars($produit['type']) . '</p>';
+if ($produit['type'] === 'telephone') {
+    $content .= '<p class="text-gray-600 mb-2"><strong>Marque :</strong> ' . htmlspecialchars($produit['marque']) . '</p>
+                 <p class="text-gray-600 mb-2"><strong>Modèle :</strong> ' . htmlspecialchars($produit['modele']) . '</p>';
 }
-$content .= '<p class="text-gray-600 mb-2">' . htmlspecialchars($produit_data['description']) . '</p>
-            <p class="text-xl font-bold mb-4">' . number_format($produit_data['prix'], 2) . ' €</p>
-            <form method="POST" class="flex items-center gap-4">
-                <label class="block mb-1">Quantité</label>
-                <input type="number" name="quantite" value="1" min="1" class="w-20">
-                <button type="submit" name="ajouter" class="bg-accent text-white py-2 px-4 rounded">Ajouter au panier</button>
-            </form>';
-if (isset($erreur)) {
-    $content .= '<p class="text-red-600 mt-4">' . $erreur . '</p>';
-}
-$content .= '</div>
+$content .= '<p class="text-gray-800 mb-2">' . htmlspecialchars($produit['description']) . '</p>
+            <p class="text-xl font-bold mb-4">' . number_format($produit['prix'], 2) . ' €</p>
+            <form method="POST" action="?page=panier">
+                <input type="hidden" name="produit_id" value="' . $produit['id'] . '">
+                <label class="block mb-2">Quantité :</label>
+                <input type="number" name="quantite" value="1" min="1" class="w-24 mb-4">
+                <button type="submit" name="ajouter" class="btn">Ajouter au panier</button>
+            </form>
+        </div>
     </div>
 </section>';
 ?>
