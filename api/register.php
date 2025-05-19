@@ -1,11 +1,15 @@
 <?php
 header('Content-Type: application/json');
 require_once __DIR__ . '/../src/config/database.php';
-require_once __DIR__ . '/../src/models/utilisateur.php';
+require_once __DIR__ . '/../src/core/Autoloader.php';
 
-// Use the fully qualified class names with their namespaces
-use Liberta_Mobile\Config\Database;
+use Liberta_Mobile\Core\Autoloader;
 use Liberta_Mobile\Model\Utilisateur;
+use Liberta_Mobile\Config\Database;
+
+(new Autoloader())->register();
+
+session_start();
 
 $db = new Database();
 $utilisateur = new Utilisateur($db);
@@ -14,14 +18,11 @@ $data = json_decode(file_get_contents('php://input'), true);
 $nom = $data['nom'] ?? '';
 $prenom = $data['prenom'] ?? '';
 $email = $data['email'] ?? '';
-$mot_de_passe = $data['mot_de_passe'] ?? '';
+$password = $data['password'] ?? '';
 
-if ($utilisateur->createUtilisateur($nom, $prenom, $email, $mot_de_passe)) {
-    session_start();
-    $user = $utilisateur->getUtilisateurByEmail($email);
-    $_SESSION['user'] = $user;
-    echo json_encode(['success' => true, 'user' => $user]);
+if ($utilisateur->createUtilisateur($nom, $prenom, $email, $password)) {
+    $_SESSION['user'] = $utilisateur->getUtilisateurByEmail($email);
+    echo json_encode(['success' => true]);
 } else {
-    echo json_encode(['success' => false, 'message' => 'Erreur lors de l’inscription']);
+    echo json_encode(['success' => false, 'message' => 'Erreur inscription']);
 }
-?>

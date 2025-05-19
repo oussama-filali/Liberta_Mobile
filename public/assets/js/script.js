@@ -71,3 +71,25 @@ setInterval(() => {
     slides.forEach((img, i) => img.classList.toggle('active', i === index));
     index = (index + 1) % slides.length;
 }, 3000);
+document.addEventListener('DOMContentLoaded', () => {
+    const images = document.querySelectorAll('.carousel-image');
+    let index = 0;
+    setInterval(() => {
+        images.forEach(img => img.classList.remove('active'));
+        images[index].classList.add('active');
+        index = (index + 1) % images.length;
+    }, 4000);
+});
+function toggleModal() {
+  document.getElementById('modal-connexion').classList.toggle('hidden');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const loginLink = document.querySelector('a[href="?page=profil&action=login"]');
+  if (loginLink) {
+    loginLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      toggleModal();
+    });
+  }
+});

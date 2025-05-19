@@ -1,56 +1,65 @@
 <?php
-// public/boutique.php
-
+// Vérifie l’inclusion via MainController
 if (!defined('LIBERTA_MOBILE_INCLUDED')) {
-    die('Accès non autorisé.');
+    define('LIBERTA_MOBILE_INCLUDED', true);
 }
 
-$filters = $_GET;
-// Accéder correctement à la propriété produit du contrôleur
-$produits = $GLOBALS['controller']->produit->getProduits($filters);
-$db = new \Liberta_Mobile\Config\Database();
-$marques = $db->getPdo()->query("SELECT * FROM marque")->fetchAll();
+// Utiliser la variable $this du contexte de la méthode route() de MainController
+$filters = $_GET ?? [];
+$produits = $this->produit->getProduits($filters);
+?>
 
-$content = '<section class="container py-8 flex flex-wrap gap-8">
-<aside class="w-full md:w-1/4">
-    <form method="GET" class="bg-white p-4 rounded shadow">
-        <h3 class="text-lg font-semibold mb-2">Filtres</h3>
-        <label>Type</label>
-        <select name="type" class="w-full mb-2">
-            <option value="">Tous</option>
-            <option value="telephone"' . (isset($filters['type']) && $filters['type'] === 'telephone' ? ' selected' : '') . '>Téléphone</option>
-            <option value="forfait"' . (isset($filters['type']) && $filters['type'] === 'forfait' ? ' selected' : '') . '>Forfait</option>
-        </select>
-        <label>Marque</label>
-        <select name="marque_id" class="w-full mb-2">
-            <option value="">Toutes</option>';
-foreach ($marques as $marque) {
-    $selected = (isset($filters['marque_id']) && $filters['marque_id'] == $marque['id']) ? 'selected' : '';
-    $content .= '<option value="' . $marque['id'] . '" ' . $selected . '>' . htmlspecialchars($marque['nom']) . '</option>';
-}
-$content .= '</select>
-        <label>Prix minimum</label>
-        <input type="number" name="prix_min" class="w-full mb-2" value="' . ($filters['prix_min'] ?? '') . '">
-        <label>Prix maximum</label>
-        <input type="number" name="prix_max" class="w-full mb-2" value="' . ($filters['prix_max'] ?? '') . '">
-        <button type="submit" class="btn w-full mt-2">Appliquer</button>
-    </form>
-</aside>
-<main class="flex-1">
-    <h2 class="text-2xl font-bold mb-6">Nos Produits</h2>
-    <div class="grid">';
-if (empty($produits)) {
-    $content .= '<p class="text-gray-600">Aucun produit trouvé.</p>';
-} else {
-    foreach ($produits as $p) {
-        $content .= '<div class="card">
-            <img src="public/images/' . htmlspecialchars($p['image_url']) . '" alt="' . htmlspecialchars($p['nom']) . '" class="h-48 w-full object-cover rounded mb-2">
-            <h4 class="text-xl font-bold">' . htmlspecialchars($p['nom']) . '</h4>
-            <p class="text-gray-600">' . number_format($p['prix'], 2) . ' €</p>
-            <a href="?page=produit&id=' . $p['id'] . '" class="btn mt-2">Voir</a>
-        </div>';
+<section class="container">
+  <h2>Notre Boutique</h2>
+
+  <div class="filters">
+    <button class="filter-btn" data-type="">Tous</button>
+    <button class="filter-btn" data-type="telephone">Téléphones seuls</button>
+    <button class="filter-btn" data-type="forfait">Forfaits seuls</button>
+    <button class="filter-btn" data-type="pack">Packs Téléphone + Forfait</button>
+  </div>
+
+  <div id="product-grid" class="grid-cards">
+    <?php
+    if (empty($produits)) {
+        echo '<p class="text-gray-600">Aucun produit trouvé.</p>';
+    } else {
+        foreach ($produits as $p) {
+            $nom = htmlspecialchars($p['nom'] ?? '');
+            $prix = number_format($p['prix'], 2);
+            $image = htmlspecialchars($p['image_url'] ?? '');
+            $imageTag = $image ? "<img src='/public/images/$image' alt='$nom' class='w-full h-48 object-cover rounded-t-lg'>" : '';
+
+            // Détection du type pour affichage JS/filtrage
+            $type = '';
+            if ($p['type'] === 'telephone' && !empty($p['forfait_id'])) {
+                $type = 'pack';
+            } elseif ($p['type'] === 'telephone') {
+                $type = 'telephone';
+            } elseif ($p['type'] === 'forfait') {
+                $type = 'forfait';
+            }
+
+            echo "<div class='card' data-type='$type'>";
+            echo $imageTag;
+            echo "<h3 class='text-xl font-semibold mt-2'>$nom</h3>";
+
+            if ($type === 'telephone') {
+                echo "<p class='text-gray-600'>" . htmlspecialchars($p['marque'] ?? '') . ' ' . htmlspecialchars($p['modele'] ?? '') . "</p>";
+            } elseif ($type === 'forfait') {
+                echo "<p class='text-gray-600'>" . htmlspecialchars($p['forfait_nom'] ?? '') . "</p>";
+            } elseif ($type === 'pack') {
+                echo "<p class='text-gray-600'>Pack : " . htmlspecialchars($p['marque'] ?? '') . ' ' . htmlspecialchars($p['modele'] ?? '') . " + " . htmlspecialchars($p['forfait_nom'] ?? '') . "</p>";
+            }
+
+            echo "<p class='text-gray-600'>$prix €</p>";
+            echo "<a href='?page=produit&id={$p['id']}' class='bg-accent text-white py-2 px-4 rounded mt-2 inline-block'>Voir détails</a>";
+            echo '</div>';
+        }
     }
-}
-$content .= '</div>
-</main>
-</section>';
+    ?>
+  </div>
+</section>
+
+<link rel="stylesheet" href="/LIBERTA_MOBILE/public/assets/css/boutique.css">
+<script src="/LIBERTA_MOBILE/public/assets/js/boutique.js" defer></script>
