@@ -27,5 +27,6 @@
             "name": "libeta-mobile"
         }
     ],
-    "zencoder.enableRepoIndexing": true
+    "zencoder.enableRepoIndexing": true,
+    "php.version": "8.3"
 }

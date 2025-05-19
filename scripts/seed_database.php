@@ -1,35 +1,53 @@
 <?php
 require_once __DIR__ . '/../src/config/database.php';
-
 use Liberta_Mobile\Config\Database;
 
 $db = new Database();
 $pdo = $db->getPdo();
 
+// --- Marques
 $marques = ['Apple', 'Samsung', 'Xiaomi'];
-$images = [
-    'Apple' => 'https://fdn2.gsmarena.com/vv/bigpic/apple-iphone-15.jpg',
-    'Samsung' => 'https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s24-ultra.jpg',
-    'Xiaomi' => 'https://fdn2.gsmarena.com/vv/bigpic/xiaomi-14.jpg'
-];
-
-// 1. MARQUES
-foreach ($marques as $nom) {
-    $pdo->prepare("INSERT INTO marque (nom) VALUES (?)")->execute([$nom]);
+foreach ($marques as $marque) {
+    $pdo->prepare("INSERT INTO marque (nom) VALUES (?)")->execute([$marque]);
 }
 echo "✔ Marques insérées\n";
 
-// 2. MODELES (20 par marque)
-foreach ($marques as $i => $nom) {
-    $marque_id = $i + 1;
-    for ($j = 1; $j <= 20; $j++) {
-        $modele = "$nom Model $j";
-        $pdo->prepare("INSERT INTO modele (nom, marque_id) VALUES (?, ?)")->execute([$modele, $marque_id]);
+// --- Modèles par marque
+$modeleData = [
+    'Apple' => [
+        'iPhone 16 Pro Titane Sable',
+        'iPhone 16 Noir',
+        'iPhone 16e Noir',
+        'iPhone 15 Noir'
+    ],
+    'Samsung' => [
+        'Galaxy S25 Ultra Bleu Titane',
+        'Galaxy S25 Edge Noir Absolu',
+        'Galaxy S24 Noir',
+        'Galaxy A56 5G Graphite'
+    ],
+    'Xiaomi' => [
+        '14 Pro',
+        'Redmi Note 14 Pro 5G Noir',
+        '15 Ultra Chrome',
+        '15 5G Noir',
+        '14T Noir',
+        '14',
+        '15 Ultra Pack Photo Pro'
+    ]
+];
+
+$model_id_map = [];
+foreach ($modeleData as $marque => $modeles) {
+    $marque_id = array_search($marque, $marques) + 1;
+    foreach ($modeles as $nom) {
+        $pdo->prepare("INSERT INTO modele (nom, marque_id) VALUES (?, ?)")->execute([$nom, $marque_id]);
+        $model_id_map[$nom] = $pdo->lastInsertId();
     }
 }
-echo "✔ 60 modèles insérés\n";
+echo "✔ Modèles insérés\n";
 
-// 3. FORFAITS
+// --- Forfaits
 $forfaits = [
     ['Liberta 20 Go 4G/5G', 8.99, '4G', 20],
     ['Liberta 160 Go 4G/5G', 16.99, '5G', 160],
@@ -41,33 +59,42 @@ foreach ($forfaits as $f) {
 }
 echo "✔ Forfaits insérés\n";
 
-// 4. PRODUITS : téléphones (avec image_url, stock, prix aléatoire)
-foreach ($marques as $m_index => $marque) {
-    for ($m = 1; $m <= 20; $m++) {
-        $nom = "$marque Model $m";
-        $description = "Découvrez le $nom, un smartphone performant et moderne.";
-        $prix = rand(399, 1199);
-        $image_url = $images[$marque];
-        $modele_id = ($m_index * 20) + $m;
+// --- Produits : téléphones
+$produits = [
+    ['Apple', 'iPhone 16 Pro Titane Sable', 'iphone-16-pro.jpg', 1399],
+    ['Apple', 'iPhone 16 Noir', 'iphone-16.jpg', 1199],
+    ['Apple', 'iPhone 16e Noir', 'iphone-16e.jpg', 999],
+    ['Apple', 'iPhone 15 Noir', 'iphone-15.jpg', 899],
+    ['Samsung', 'Galaxy S25 Ultra Bleu Titane', 'galaxy-s25-ultra.jpg', 1399],
+    ['Samsung', 'Galaxy S25 Edge Noir Absolu', 'galaxy-s25-edge.jpg', 1299],
+    ['Samsung', 'Galaxy S24 Noir', 'galaxy-s24.jpg', 1099],
+    ['Samsung', 'Galaxy A56 5G Graphite', 'galaxy-a56.jpg', 699],
+    ['Xiaomi', '14 Pro', 'xiaomi-14-pro.jpg', 899],
+    ['Xiaomi', 'Redmi Note 14 Pro 5G Noir', 'xiaomi-redmi-note14-pro-5g.jpg', 399],
+    ['Xiaomi', '15 Ultra Chrome', 'xiaomi-15-ultra.jpg', 999],
+    ['Xiaomi', '15 5G Noir', 'xiaomi-15-5g.jpg', 849],
+    ['Xiaomi', '14T Noir', 'xiaomi-14t.jpg', 749],
+    ['Xiaomi', '14', 'xiaomi-14.jpg', 799],
+    ['Xiaomi', '15 Ultra Pack Photo Pro', 'xiaomi-15-ultra-pack.jpg', 1199],
+];
 
-        $pdo->prepare("INSERT INTO produit (nom, description, prix, image_url, stock, type, marque_id, modele_id)
-            VALUES (?, ?, ?, ?, ?, 'telephone', ?, ?)")
-            ->execute([$nom, $description, $prix, $image_url, 10, $m_index + 1, $modele_id]);
-    }
+foreach ($produits as [$marque, $modele_nom, $image, $prix]) {
+    $marque_id = array_search($marque, $marques) + 1;
+    $modele_id = $model_id_map[$modele_nom];
+    $nom = "$modele_nom";
+    $desc = "Découvrez le $nom avec des performances exceptionnelles.";
+    $pdo->prepare("INSERT INTO produit (nom, description, prix, image_url, stock, type, marque_id, modele_id)
+        VALUES (?, ?, ?, ?, ?, 'telephone', ?, ?)")
+        ->execute([$nom, $desc, $prix, $image, 20, $marque_id, $modele_id]);
 }
-echo "✔ Téléphones insérés\n";
+echo "✔ Produits téléphones insérés\n";
 
-// 5. PRODUITS : forfaits
-for ($i = 1; $i <= 3; $i++) {
-    $forfait = $pdo->query("SELECT * FROM forfait WHERE id = $i")->fetch();
-    $pdo->prepare("INSERT INTO produit (nom, description, prix, type, forfait_id, stock)
-        VALUES (?, ?, ?, 'forfait', ?, 999)")
-        ->execute([
-            $forfait['nom'],
-            "Profitez d'un forfait de " . $forfait['data'] . " Go sur le réseau " . $forfait['reseau'],
-            $forfait['prix'],
-            $forfait['id']
-        ]);
+// --- Produits : forfaits seuls
+$forfaitsDB = $pdo->query("SELECT * FROM forfait")->fetchAll(PDO::FETCH_ASSOC);
+foreach ($forfaitsDB as $f) {
+    $desc = "Forfait " . $f['data'] . " Go en " . $f['reseau'] . ", appels/SMS illimités.";
+    $pdo->prepare("INSERT INTO produit (nom, description, prix, image_url, stock, type, forfait_id)
+        VALUES (?, ?, ?, ?, ?, 'forfait', ?)")
+        ->execute([$f['nom'], $desc, $f['prix'], 'forfait.jpg', 999, $f['id']]);
 }
-echo "✔ Produits forfaits insérés\n";
-?>
+echo "✔ Produits forfaits seuls insérés\n";

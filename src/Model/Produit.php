@@ -36,9 +36,10 @@ class Produit {
     }
 
     public function getProduits($filters = []) {
-        $sql = "SELECT p.*, m.nom AS marque, mo.nom AS modele FROM produit p
+        $sql = "SELECT p.*, m.nom AS marque, mo.nom AS modele, f.nom AS forfait_nom FROM produit p
                 LEFT JOIN marque m ON p.marque_id = m.id
                 LEFT JOIN modele mo ON p.modele_id = mo.id
+                LEFT JOIN forfait f ON p.forfait_id = f.id
                 WHERE 1=1";
         $params = [];
 
