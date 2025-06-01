@@ -30,3 +30,7 @@ phpdoc.xml
 
 # Ignore cached PHPUnit results.
 .phpunit.result.cache
+
+# Ignore PHPUnit configuration files
+.<Environment background={true} preset='forest' />
+.env
