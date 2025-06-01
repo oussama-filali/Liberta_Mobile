@@ -1,7 +1,7 @@
 <?php
 require __DIR__ . '/../../vendor/'; // Chemin correct
 
-\Stripe\Stripe::setApiKey('***REMOVED***51ROaOpFaoIHn8eymKibMtVUR5FHe6rFMtsplfzKGED3JgZ3Dib5ySgrDu5dVySf0AkLMFsk2a6JkCjtnX4KM4aA800tCijsFJE'); // Remplace par ta vraie clé Stripe
+\Stripe\Stripe::setApiKey(getenv('STRIPE_SECRET_KEY'));
 
 // Ajoute les headers CORS pour autoriser l'appel depuis React
 header('Access-Control-Allow-Origin: http://localhost:3000');
