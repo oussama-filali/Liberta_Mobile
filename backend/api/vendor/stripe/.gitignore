@@ -33,4 +33,5 @@ phpdoc.xml
 
 # Ignore PHPUnit configuration files
 .<Environment background={true} preset='forest' />
+# Ignore .env
 .env
